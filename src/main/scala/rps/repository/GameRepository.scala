@@ -32,12 +32,7 @@ class InMemoryGameRepositoryImpl[F[_]](implicit F: Sync[F]) extends GameReposito
 }
 
 class DbGameRepositoryImpl[F[_]: Async: ContextShift](xa: Transactor[F]) extends GameRepository[F] {
-
-  import doobie.postgres.implicits._
-  import io.chrisdavenport.fuuid.doobie.implicits._
-  import io.buildo.enumero._
-  implicit def enumeroMeta[E <: CaseEnum](implicit s: CaseEnumSerialization[E]): Meta[E] =
-    Meta[String].imap(s.caseFromString(_).get)(s.caseToString)
+  import DoobieInstances._
 
   override def list(): F[List[Game]] =
     sql"select userMove, cpuMove, result from game".query[Game].to[List].transact(xa)
