@@ -3,17 +3,29 @@ package rps
 import cats.effect._
 import cats.implicits._
 import scala.util.Random
+import io.chrisdavenport.log4cats.Logger
 
 trait GameService[F[_]] {
   def play(userMove: Move): F[Game]
+  def list(): F[List[Game]]
 }
 
-class GameServiceImpl[F[_]](implicit F: Sync[F]) extends GameService[F] {
+class GameServiceImpl[F[_]](gameRepository: GameRepository[F])(
+    implicit F: Sync[F],
+    logger: Logger[F])
+    extends GameService[F] {
+
   override def play(userMove: Move): F[Game] =
     for {
       cpuMove <- generateMove()
       result <- computeResult(userMove, cpuMove)
-    } yield Game(userMove, cpuMove, result)
+      _ <- logger.info(s"$userMove vs $cpuMove: $result")
+      game = Game(userMove, cpuMove, result)
+      _ <- gameRepository.store(game)
+    } yield game
+
+  override def list(): F[List[Game]] =
+    gameRepository.list()
 
   private def generateMove(): F[Move] =
     F.delay(Random.shuffle(Move.values.toList).head)

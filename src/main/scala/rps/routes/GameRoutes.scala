@@ -24,6 +24,12 @@ class GameRoutes[F[_]: Sync](gameService: GameService[F]) extends Http4sDsl[F] {
         result <- gameService.play(playRequest.userMove)
         res <- Ok(result)
       } yield res
+
+    case req @ GET -> Root / "list" =>
+      for {
+        result <- gameService.list()
+        res <- Ok(result)
+      } yield res
   }
 
   val routes: HttpRoutes[F] = httpRoutes
