@@ -36,7 +36,6 @@ lazy val root = project
       "io.chrisdavenport" %% "fuuid" % V.fuuid,
       "io.chrisdavenport" %% "fuuid-http4s" % V.fuuid,
       "io.chrisdavenport" %% "fuuid-circe" % V.fuuid,
-      "io.chrisdavenport" %% "fuuid-doobie" % V.fuuid,
       // for purely functional logging
       "io.chrisdavenport" %% "log4cats-slf4j" % "0.2.0",
       // for actually logging something
