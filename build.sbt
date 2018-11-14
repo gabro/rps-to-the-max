@@ -51,9 +51,10 @@ lazy val root = project
       "com.github.pureconfig" %% "pureconfig-cats-effect" % V.pureconfig,
       "org.tpolecat" %% "doobie-core" % V.doobie,
       "org.tpolecat" %% "doobie-postgres" % V.doobie,
-      "org.flywaydb" % "flyway-core" % "5.0.7"
+      "org.flywaydb" % "flyway-core" % "5.0.7",
     ) ++ Seq(
-      "io.monix" %% "minitest" % "2.2.2"
+      "io.monix" %% "minitest" % "2.2.2",
+      "com.danielasfregola" %% "random-data-generator-magnolia" % "2.6",
     ).map(_ % Test),
     testFrameworks += new TestFramework("minitest.runner.Framework"),
     addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.6"),

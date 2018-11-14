@@ -32,18 +32,27 @@ class InMemoryGameRepositoryImpl[F[_]](implicit F: Sync[F]) extends GameReposito
 }
 
 class DbGameRepositoryImpl[F[_]: Async: ContextShift](xa: Transactor[F]) extends GameRepository[F] {
-  import DoobieInstances._
+  import DbGameRepositoryImpl._
 
   override def list(): F[List[Game]] =
-    sql"select userMove, cpuMove, result from game".query[Game].to[List].transact(xa)
+    listQuery.to[List].transact(xa)
 
   override def store(game: Game): F[Id[Game]] =
     for {
       uuid <- FUUID.randomFUUID[F]
-      _ <- sql"""insert into game
-          (id, userMove, cpuMove, result) values
-          ($uuid, ${game.userMove}::move, ${game.cpuMove}::move, ${game.result}::result)
-        """.update.run.transact(xa)
+      _ <- storeUpdate(uuid, game).run.transact(xa)
     } yield Id(uuid)
 
+}
+
+object DbGameRepositoryImpl {
+  import DoobieInstances._
+
+  val listQuery = sql"select userMove, cpuMove, result from game".query[Game]
+
+  def storeUpdate(uuid: FUUID, game: Game) = sql"""
+    insert into game
+    (id, userMove, cpuMove, result) values
+    ($uuid, ${game.userMove}, ${game.cpuMove}, ${game.result})
+  """.update
 }
