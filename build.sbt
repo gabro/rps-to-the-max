@@ -60,3 +60,15 @@ lazy val root = project
     addCompilerPlugin("org.spire-math" %% "kind-projector" % "0.9.6"),
     addCompilerPlugin("org.scalamacros" % "paradise" % "2.1.1" cross CrossVersion.full),
   )
+
+lazy val wirogen = project.in(file("wirogen")).settings(
+    scalaVersion := V.scala,
+    scalacOptions += "-Ypartial-unification",
+    libraryDependencies ++= Seq(
+      "org.scalameta" %% "scalameta" % "4.0.0",
+      "com.geirsson" %% "scalafmt-core" % "1.6.0-RC4",
+      // due to https://github.com/scalameta/scalafmt/issues/1252
+      "org.scala-lang" % "scala-reflect" % V.scala
+    ),
+
+)

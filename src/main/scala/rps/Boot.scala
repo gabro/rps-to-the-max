@@ -29,7 +29,8 @@ object Boot extends IOApp {
     )
     val gameRepository = new DbGameRepositoryImpl[IO](xa)
     val gameService = new GameServiceImpl[IO](gameRepository)
-    val gameRoutes = new GameRoutes(gameService)
+    val gameController = new GameControllerImpl[IO](gameService)
+    val gameRoutes = new GameRoutes(gameController)
 
     Router(
       "/rps" -> gameRoutes.routes
